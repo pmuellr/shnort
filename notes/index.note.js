@@ -47,5 +47,7 @@ export function noteTitle(md, currentNote) {
 }
 
 export function noteBody($el, currentNote) {
-  loadNote(`/notes/${currentNote}.note.js`, $el, '.noteBody')
+  //@ts-ignore
+  const noteUrl = `${new URL(`./${currentNote}.note.js`, import.meta.url)}`
+  loadNote(noteUrl, $el, '.noteBody')
 }
