@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="../images/shnort-1024x1024.png">
+  <link rel="stylesheet" type="text/css" href="../node_modules/@observablehq/inspector/dist/inspector.css">
+</head>
+<body>
+
+<div id=shnort-var-text></div>
+<div>
+  <label>
+    <span class=pausedView></span>
+    paused
+  </label>
+</div>
+<div id=shnort-var-counter></div>
+  
+<script type="module">
+import { createModule  } from "../shnort-cdn.js";
+
+const module = createModule()
+
+module.addVariable(function text(md) {
+  return md`
+# generator.html
+
+Clone of the
+[Pause a Generator](https://observablehq.com/@mbostock/pause-a-generator)
+Note.
+`
+})
+
+module.addViewOf(function paused(html) {
+  return html`<input id=paused type=checkbox>`
+})
+
+module.addVariable(function *counter(paused) {
+  let counter = this | 0
+  if (paused) return yield counter
+
+  while (true) {
+    yield ++counter
+  }
+})
+</script>

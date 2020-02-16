@@ -1,0 +1,35 @@
+{
+  "name": "shnort",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simple Html Notes for the Observable RunTime",
+  "license": "MIT",
+  "author": "Patrick Mueller <pmuellr@apache.org> (https://github.com/pmuellr)",
+  "homepage": "https://github.com/pmuellr/shnort",
+  "bin": {
+    "shnort": "shnort.js"
+  },
+  "scripts": {
+    "serve": "serve",
+    "watch": "serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pmuellr/shnort.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pmuellr/shnort/issues"
+  },
+  "standard": {
+    "ignore": [
+      "tmp/**/*",
+      "docs/**/*"
+    ]
+  },
+  "devDependencies": {
+    "@observablehq/inspector": "^3.2.1",
+    "@observablehq/runtime": "^4.6.4",
+    "@observablehq/stdlib": "^3.2.1",
+    "serve": "^11.3.0"
+  }
+}
