@@ -6,10 +6,11 @@ export { Runtime, Inspector, Library } from 'https://cdn.jsdelivr.net/npm/@obser
 const DefaultRuntime = new Runtime()
 
 // load note in module at url into el.querySelector(selector)
-export async function loadNote(url, containerEl, selector) {
+export async function loadNote(relUrl, baseUrl, containerEl, selector) {
   const targetEl = containerEl.querySelector(selector)
   if (!targetEl) throw new Error(`selector not found: "${selector}"`)
 
+  const url = `${new URL(relUrl, baseUrl)}`
   const noteExports = { ...await import(url), $el: targetEl }
   const noteBody = noteExports.$body || '<pre>no body</pre>'
   targetEl.innerHTML = noteBody

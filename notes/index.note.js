@@ -19,9 +19,9 @@ const notes = [
 
 export const currentNoteMutableInit = notes[0]
 
-export function description(md) {
-  return md`
-    select a note below
+export function description(html) {
+  return html`
+    <p>select a note below
   `
 }
 
@@ -48,6 +48,5 @@ export function noteTitle(md, currentNote) {
 
 export function noteBody($el, currentNote) {
   //@ts-ignore
-  const noteUrl = `${new URL(`./${currentNote}.note.js`, import.meta.url)}`
-  loadNote(noteUrl, $el, '.noteBody')
+  loadNote(`./${currentNote}.note.js`, import.meta.url, $el, '.noteBody')
 }

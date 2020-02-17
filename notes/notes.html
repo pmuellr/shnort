@@ -11,7 +11,7 @@
     <script type="module">
       import { loadNote } from '../shnort.js'
       const noteUrl = `${new URL('./index.note.js', import.meta.url)}`
-      loadNote(noteUrl, document.body, '#shell')
+      loadNote('./index.note.js', import.meta.url, document.body, '#shell')
     </script>
   </body>
 </html>
