@@ -1,0 +1,23 @@
+<p>Move the slider to change the radius of the circles.</p>
+<div>
+  <input oninput="radiusChanged(this)" type=range min=1 max=300 step=1 value=40>
+  <span>radius:</span><span class=radius></span>
+</div>
+
+<div class=graphic>
+  <svg width=400 height=400>
+    <circle cx=190 cy=190 r=40 fill=green style="opacity: 0.25;" /> 
+    <circle cx=200 cy=200 r=40 fill=red   style="opacity: 0.25;" />  
+    <circle cx=210 cy=210 r=40 fill=blue  style="opacity: 0.25;" /> 
+  </svg>
+</div>
+
+<script>
+function radiusChanged(el) {
+  document.querySelector('.radius').innerHTML = el.value
+  const circles = document.querySelectorAll('svg circle')
+  for (const circle of Array.from(circles)) {
+    circle.setAttribute('r', el.value)
+  }
+}
+</script>

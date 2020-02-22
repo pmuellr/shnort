@@ -1,0 +1,64 @@
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+<div id=graph style="float: right"></div>
+
+<p>Move the slider to change the values of a, b, and c.</p>
+<p>y = a⋅sin(x) + b⋅sin(x<sup>2</sup>) + c⋅sin(x<sup>3</sup>)</p>
+
+<div>
+  <input id=aView oninput="update()" type=range min=-10 max=10 step=1 value=0>
+  a: <span id=a></span>
+</div>
+
+<div>
+  <input id=bView oninput="update()" type=range min=-10 max=10 step=1 value=0>
+  b: <span id=b></span>
+</div>
+
+<div>
+  <input id=cView oninput="update()" type=range min=-10 max=10 step=1 value=0>
+  c: <span id=c></span>
+</div>
+
+<script>
+function fn(x, a, b, c) {
+  return a * Math.sin(x) + b * Math.sin(x * x) + c * Math.sin(x * x * x)
+}
+
+const BaseGraph = {
+  $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+  data: { values: [] },
+  width: 500,
+  height: 250,
+  mark: {
+    type: 'line',
+    interpolate: 'monotone'
+  },
+  encoding: {
+    x: { field: 'x', type: 'quantitative' },
+    y: { field: 'y', type: 'quantitative' }
+  }
+}
+
+update()
+
+function update() {
+  const a = parseInt(document.querySelector('#aView').value, 10)
+  const b = parseInt(document.querySelector('#bView').value, 10)
+  const c = parseInt(document.querySelector('#cView').value, 10)
+
+  document.querySelector('#a').innerHTML = a
+  document.querySelector('#b').innerHTML = b
+  document.querySelector('#c').innerHTML = c
+
+  const values = []
+  for (let x = -Math.PI*2; x <= Math.PI*2; x += Math.PI/16) {
+    values.push({ x, y: fn(x, a, b, c) })
+  }
+
+  const graph = { ...BaseGraph, data: { values } }
+  vegaEmbed('#graph', graph)
+}
+</script>

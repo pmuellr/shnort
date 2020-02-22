@@ -1,0 +1,62 @@
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+<div id=graph style="float: right"></div>
+
+<p>Move the slider to change the values of a, b, and c.</p>
+<p>function: a * x<sup>2</sup> + b * x + c * x</p>
+
+<div>
+  <input id=aView oninput="update()" type=range min=-100 max=100 step=1 value=0>
+  a: <span id=a></span>
+</div>
+
+<div>
+  <input id=bView oninput="update()" type=range min=-100 max=100 step=1 value=0>
+  b: <span id=b></span>
+</div>
+
+<div>
+  <input id=cView oninput="update()" type=range min=-100 max=100 step=1 value=0>
+  c: <span id=c></span>
+</div>
+
+<script>
+function fn(x, a, b, c) {
+  return (a * x * x) + (b * x) + c
+}
+
+const BaseGraph = {
+  $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+  data: { values: [] },
+  mark: {
+    type: 'line',
+    interpolate: 'monotone'
+  },
+  encoding: {
+    x: { field: 'x', type: 'quantitative' },
+    y: { field: 'y', type: 'quantitative' }
+  }
+}
+
+update()
+
+function update() {
+  const a = parseInt(document.querySelector('#aView').value, 10)
+  const b = parseInt(document.querySelector('#bView').value, 10)
+  const c = parseInt(document.querySelector('#cView').value, 10)
+
+  document.querySelector('#a').innerHTML = a
+  document.querySelector('#b').innerHTML = b
+  document.querySelector('#c').innerHTML = c
+
+  const values = []
+  for (let x = -2; x <= 2; x++) {
+    values.push({ x, y: fn(x, a, b, c) })
+  }
+
+  const graph = { ...BaseGraph, data: { values } }
+  vegaEmbed('#graph', graph)
+}
+</script>
