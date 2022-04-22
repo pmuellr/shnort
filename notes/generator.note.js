@@ -1,19 +1,23 @@
-export const $body = `
-  <p>Clone of the
-    <a href="https://observablehq.com/@mbostock/pause-a-generator">Pause a Generator</a>
-    Observable Notebook.
-  </p>
-  <div>
-    <label>
-      <span class=pausedView></span>
-      <label for=paused>paused</label>
-    </label>
-  </div>
-  <div class=counter></div>
-`
+const thisUrl = import.meta.url
+const ghUrl = 'https://github.com/pmuellr/shnort/blob/master/notes/generator.note.js'
+
+export const $cells = [
+  'header',
+  'paused_view',
+  'counter',
+  'trailer',
+]
+
+export function header(md) {
+  return md`
+  Clone of the
+  [Pause a Generator](https://observablehq.com/@mbostock/pause-a-generator)
+  Observable Notebook.
+  `
+}
   
-export function pausedView(html) {
-  return html`<input id=paused type=checkbox>`
+export function paused_view(Inputs) {
+  return Inputs.toggle({ label: 'Paused' })
 }
 
 export function *counter(paused) {
@@ -23,4 +27,10 @@ export function *counter(paused) {
   while (true) {
     yield ++counter
   }
+}
+
+export function trailer(md) {
+  const currSource = `[view current source](${thisUrl})`
+  const githSource = `[view source at Gihub](${ghUrl})`
+  return md`_${currSource}_<br>_${githSource}_`
 }
