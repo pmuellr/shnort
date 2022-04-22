@@ -10,27 +10,59 @@ export * as Inputs                     from 'https://cdn.jsdelivr.net/npm/@obser
 const DefaultRuntime = new Runtime({ ...new Library(), Inputs })
 
 // load note in module at url into el.querySelector(selector)
+/** @type { (url: string, container: Element, selector: string) => Promise<any> } */
 export async function loadNote(url, containerEl, selector) {
   const targetEl = containerEl.querySelector(selector)
   if (!targetEl) throw new Error(`selector not found: "${selector}"`)
 
-  const noteExports = { ...await import(url), $el: targetEl }
-  const noteBody = noteExports.$body || '<pre>no body</pre>'
-  targetEl.innerHTML = noteBody
+  const noteExports = await import(url)
 
   const observerFactory = getObserverFactory(targetEl)
   const noteModule = new NoteModule(observerFactory)
 
-  const vars = new Set(Object.keys(noteExports))
+  /** @type { string[] } */
+  const cells = []
+  let vars = new Set(noteExports.$cells || Object.keys(noteExports))
   for (const varName of vars) {
     const varValue = noteExports[varName]
     const [ type, name ] = getTypeNameFromName(varName)
 
     switch(type) {
-      case 'Variable': noteModule.addVariable(name, varValue); break
-      case 'View': noteModule.addViewOf(name, varValue); break
-      case 'Mutable': noteModule.addMutable(name, varValue); break
-      default: throw new Error(`unexpected export type ${type}`)
+      case 'Variable': 
+        cells.push(name)
+        break
+      case 'View': 
+        cells.push(`${name}_view`)
+        // cells.push(name)
+        break
+      case 'Mutable':
+        cells.push(`${name}_mutable`)
+        break
+      default: 
+        throw new Error(`unexpected export type ${type}`)
+    }
+  }
+
+  const cellHtml = cells.map(cell => `<div class=${cell}></div>`)
+  targetEl.innerHTML = cellHtml.join('\n')
+
+  vars = new Set(Object.keys(noteExports))
+  for (const varName of vars) {
+    const varValue = noteExports[varName]
+    const [ type, name ] = getTypeNameFromName(varName)
+
+    switch(type) {
+      case 'Variable': 
+        noteModule.addVariable(name, varValue)
+        break
+      case 'View': 
+        noteModule.addViewOf(name, varValue)
+        break
+      case 'Mutable':
+        noteModule.addMutable(name, varValue) 
+        break
+      default: 
+        throw new Error(`unexpected export type ${type}`)
     }
   }
 
@@ -43,6 +75,7 @@ class NoteModule {
     this.observerFactory = observerFactory
   }
 
+  /** @type { (name: string, value: any) => void } */
   addVariable (name, value) {
     let params = []
     if (typeof value === 'function') {
@@ -51,11 +84,11 @@ class NoteModule {
 
     const variable = this.module.variable(this.observerFactory(name))
     variable.define(name, params, value)
-    return variable
   }
 
+  /** @type { (name: string, fn: any) => void } */
   addViewOf (name, fn) {
-    const viewName = `${name}View`
+    const viewName = `${name}_view`
     const params = getFnParams(fn)
 
     const variable = this.module.variable(this.observerFactory(name))
@@ -69,8 +102,9 @@ class NoteModule {
     )
   }
 
+  /** @type { (name: string, initialValue: any) => void } */
   addMutable (name, initialValue) {
-    const mutableName = `${name}Mutable`
+    const mutableName = `${name}_mutable`
 
     const variable = this.module.variable(this.observerFactory(name))
     const mutableVariable = this.module.variable(this.observerFactory(mutableName))
@@ -89,13 +123,14 @@ class NoteModule {
   }
 }
 
+/** @type {(name) => [ string, string ]} */
 function getTypeNameFromName(name) {
   let match
 
-  match = name.match(/^(.*)View$/)
+  match = name.match(/^(.*)_view$/)
   if (match) return ['View', match[1]]
 
-  match = name.match(/^(.*)MutableInit$/)
+  match = name.match(/^(.*)_mutable$/)
   if (match) return ['Mutable', match[1]]
 
   return ['Variable', name]
