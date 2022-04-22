@@ -19,7 +19,21 @@ We'll see!
 usage
 ================================================================================
 
-TBD
+To run the samples, you'll need to arrange to run them with a web server,
+as they load code dynamically and that doesn't work well with file:// URLs.
+
+
+[`serve`](https://www.npmjs.com/package/serve) is a dev dependency of this
+package, and you can launch it via `npm run serve`.
+
+Assuming it's launched from the repo directory with port 3000, you can 
+access the samples from:
+
+http://localhost:3000/notes/notes.html
+
+They are also available publically at:
+
+https://pmuellr.github.io/shnort/notes/notes.html
 
 
 install
