@@ -1,4 +1,5 @@
 const notes = [
+  'Inputs',
   'graphic',
   'generator',
 ]
@@ -9,7 +10,6 @@ export const $layout = `
     <div class=description></div>
     <div class=noteButtons></div>
     <div class=noteTitle></div>
-    <div class=noteBodyLoader style=display:none></div>
     <div class=noteBody></div>
   </div>
 `

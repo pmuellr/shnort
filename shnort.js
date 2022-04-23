@@ -50,11 +50,11 @@ export async function loadNote(url, containerEl, selector) {
 
 class NoteModule {
   constructor (observerFactory) {
-    const library = {
+    this.library = {
       ...new Library(),
       loadNote: () => loadNote,
     }
-    this.runtime = new Runtime(library)
+    this.runtime = new Runtime(this.library)
     this.module = this.runtime.module()
     this.observerFactory = observerFactory
   }
@@ -141,8 +141,7 @@ function getObserverFactory(containerEl) {
   /** @type { (variableName: string) => Inspector } */
   function observer(variableName) {
     if (variableName.startsWith('$')) return
-    const el = containerEl.querySelector(`.${variableName}`)
-    if (!el) return
+    const el = containerEl.querySelector(`.${variableName}`) || document.createElement('div')
 
     return new Inspector(el)
   }
