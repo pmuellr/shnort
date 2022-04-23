@@ -29,11 +29,11 @@ package, and you can launch it via `npm run serve`.
 Assuming it's launched from the repo directory with port 3000, you can 
 access the samples from:
 
-http://localhost:3000/notes/notes.html
+http://localhost:3000/notes/index.note.html
 
 They are also available publically at:
 
-https://pmuellr.github.io/shnort/notes/notes.html
+https://pmuellr.github.io/shnort/notes/index.note.html
 
 
 install

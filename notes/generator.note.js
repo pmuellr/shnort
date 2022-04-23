@@ -1,12 +1,9 @@
-const thisUrl = import.meta.url
-const ghUrl = 'https://github.com/pmuellr/shnort/blob/master/notes/generator.note.js'
-
-export const $cells = [
-  'header',
-  'paused_view',
-  'counter',
-  'trailer',
-]
+export const $layout = `
+  <div class='header'></div>
+  <div class='paused_view'></div>
+  <div class='counter'></div>
+  <div class='trailer'></div>
+`
 
 export function header(md) {
   return md`
@@ -25,12 +22,12 @@ export function *counter(paused) {
   if (paused) return yield counter
 
   while (true) {
+    console.log('generator is updating counter')
     yield ++counter
   }
 }
 
 export function trailer(md) {
-  const currSource = `[view current source](${thisUrl})`
-  const githSource = `[view source at Gihub](${ghUrl})`
-  return md`_${currSource}_<br>_${githSource}_`
+  const source = `[view current source](${import.meta.url})`
+  return md`_${source}_`
 }

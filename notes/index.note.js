@@ -1,23 +1,20 @@
-import { loadNote, Library } from '../shnort.js'
-
-const { DOM } = Library
-
-export const $body = `
-  <div>
-    <h1>${document.title}</h1>
-    <div class=description></div>
-    <div class=noteButtons></div>
-    <div class=noteTitle></div>
-    <div class=noteBody></div>
-  </div>
-`
-
 const notes = [
   'graphic',
   'generator',
 ]
 
-export const currentNoteMutableInit = notes[0]
+export const $layout = `
+  <div>
+    <h1>${document.title}</h1>
+    <div class=description></div>
+    <div class=noteButtons></div>
+    <div class=noteTitle></div>
+    <div class=noteBodyLoader style=display:none></div>
+    <div class=noteBody></div>
+  </div>
+`
+
+export const currentNote_mutable = notes[0]
 
 export function description(html) {
   return html`
@@ -25,7 +22,7 @@ export function description(html) {
   `
 }
 
-export function noteButtons(html, currentNote, currentNoteMutable) {
+export function noteButtons(html, currentNote_mutable) {
   const container = html`<div/>`
   for (const note of notes) {
     const button = getNoteButton(note)
@@ -36,7 +33,7 @@ export function noteButtons(html, currentNote, currentNoteMutable) {
   function getNoteButton(note) {
     const button = html`<button>${note}</button>`
     button.onclick = () => {
-      currentNoteMutable.value = note
+      currentNote_mutable.value = note
     }
     return button
   }
@@ -46,7 +43,18 @@ export function noteTitle(md, currentNote) {
   return md`# ${currentNote}`
 }
 
-export function noteBody($el, currentNote) {
-  //@ts-ignore
-  loadNote(`./${currentNote}.note.js`, import.meta.url, $el, '.noteBody')
+let currentModule = null
+
+export async function noteBodyLoader($el, currentNote, loadNote) {
+  if (!$el || !currentNote) return
+
+  if (currentModule != null) {
+    currentModule.runtime.dispose()
+    currentModule = null
+
+    const el = $el.querySelector('.noteBody')
+    if (el) el.innerHTML = ''
+  }
+
+  currentModule = await loadNote(`${import.meta.url}/../${currentNote}.note.js`, $el, '.noteBody')
 }

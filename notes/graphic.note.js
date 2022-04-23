@@ -1,20 +1,16 @@
-const thisUrl = import.meta.url
-const ghUrl = 'https://github.com/pmuellr/shnort/blob/master/notes/graphic.note.js'
-
-export const $cells = [
-  'header',
-  'radius_view',
-  'graphic',
-  'trailer',
-]
+export const $layout = `
+  <div class='header'></div>
+  <div class='radius_view'></div>
+  <div class='graphic'></div>
+  <div class='trailer'></div>
+`
 
 export function header(md) {
   return md`Move the slider to change the radius of the circles.`
 }
 
 export function radius_view(Inputs) {
-  // return html`<input type=range min=1 max=300 step=1 value=40>`
-  return Inputs.range([1, 300], { value: 40, label: 'radius' })
+  return Inputs.range([1, 300], { value: 40, step: 1, label: 'radius' })
 }
 
 export function graphic(html, radius) {
@@ -28,7 +24,6 @@ export function graphic(html, radius) {
 }
 
 export function trailer(md) {
-  const currSource = `[view current source](${thisUrl})`
-  const githSource = `[view source at Gihub](${ghUrl})`
-  return md`_${currSource}_<br>_${githSource}_`
+  const source = `[view current source](${import.meta.url})`
+  return md`_${source}_`
 }

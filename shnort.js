@@ -1,52 +1,31 @@
-//@ts-ignore
-import { Runtime, Inspector, Library } from 'https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js'
-// @ts-ignore
-import * as Inputs                     from 'https://cdn.jsdelivr.net/npm/@observablehq/inputs@0/src/index.js'
-//@ts-ignore
-export { Runtime, Inspector, Library } from 'https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js'
-//@ts-ignore
-export * as Inputs                     from 'https://cdn.jsdelivr.net/npm/@observablehq/inputs@0/src/index.js'
+import { Runtime, Inspector, Library } from './vendor/observablehq/runtime.js'
+export { Runtime, Inspector, Library } from './vendor/observablehq/runtime.js'
 
-const DefaultRuntime = new Runtime({ ...new Library(), Inputs })
+const DefaultLibrary = {
+  ...new Library(),
+  loadNote: () => loadNote,
+}
+const DefaultRuntime = new Runtime(DefaultLibrary)
 
-// load note in module at url into el.querySelector(selector)
 /** @type { (url: string, container: Element, selector: string) => Promise<any> } */
 export async function loadNote(url, containerEl, selector) {
+  if (!containerEl) throw new Error(`container not supplied`)
   const targetEl = containerEl.querySelector(selector)
   if (!targetEl) throw new Error(`selector not found: "${selector}"`)
 
-  const noteExports = await import(url)
+  const noteExports = await import(url) || { noExports: 'no exports from module' }
 
+  const layout = getLayout(noteExports)
+  targetEl.innerHTML = layout
+
+  const vars = Object.keys(noteExports)
+    .filter(key => !key.startsWith('$'))
+  
   const observerFactory = getObserverFactory(targetEl)
   const noteModule = new NoteModule(observerFactory)
 
-  /** @type { string[] } */
-  const cells = []
-  let vars = new Set(noteExports.$cells || Object.keys(noteExports))
-  for (const varName of vars) {
-    const varValue = noteExports[varName]
-    const [ type, name ] = getTypeNameFromName(varName)
+  noteModule.addVariable('$el', targetEl)
 
-    switch(type) {
-      case 'Variable': 
-        cells.push(name)
-        break
-      case 'View': 
-        cells.push(`${name}_view`)
-        // cells.push(name)
-        break
-      case 'Mutable':
-        cells.push(`${name}_mutable`)
-        break
-      default: 
-        throw new Error(`unexpected export type ${type}`)
-    }
-  }
-
-  const cellHtml = cells.map(cell => `<div class=${cell}></div>`)
-  targetEl.innerHTML = cellHtml.join('\n')
-
-  vars = new Set(Object.keys(noteExports))
   for (const varName of vars) {
     const varValue = noteExports[varName]
     const [ type, name ] = getTypeNameFromName(varName)
@@ -66,12 +45,17 @@ export async function loadNote(url, containerEl, selector) {
     }
   }
 
-  return noteModule.module
+  return noteModule
 }
 
 class NoteModule {
   constructor (observerFactory) {
-    this.module = DefaultRuntime.module()
+    const library = {
+      ...new Library(),
+      loadNote: () => loadNote,
+    }
+    this.runtime = new Runtime(library)
+    this.module = this.runtime.module()
     this.observerFactory = observerFactory
   }
 
@@ -136,6 +120,7 @@ function getTypeNameFromName(name) {
   return ['Variable', name]
 }
 
+/** @type { (fn: Function) => string[] } */
 function getFnParams (fn) {
   const fnString = `${fn}`.replace(/\n/g, ' ')
   const params = fnString
@@ -149,8 +134,12 @@ function getFnParams (fn) {
   return params
 }
 
+/** @type { (containerEl: Element) => ((variableName: string) => Inspector) } */
 function getObserverFactory(containerEl) {
-  return function observer(variableName) {
+  return observer
+
+  /** @type { (variableName: string) => Inspector } */
+  function observer(variableName) {
     if (variableName.startsWith('$')) return
     const el = containerEl.querySelector(`.${variableName}`)
     if (!el) return
@@ -159,3 +148,12 @@ function getObserverFactory(containerEl) {
   }
 }
 
+/** @type { (exports: any) => string } */
+function getLayout(exports) {
+  if (exports && typeof exports.$layout === 'string') {
+    return exports.$layout
+  }
+
+  const keys = Object.keys(exports)
+  return keys.map(key => `<div class="${key}">`).join('\n')
+}

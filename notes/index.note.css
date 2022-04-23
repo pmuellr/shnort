@@ -1,0 +1,19 @@
+html, body, #root {
+  width:  100%;
+  height: 100%;
+  margin:    0;
+  padding:   0;
+  /* 
+  overflow: hidden; 
+  */
+}
+
+body {
+  background-color: #F0FFF0;
+  font-family:      Helvetica;
+  padding:          0.5em;
+}
+
+body.dev-mode {
+  background-color: #FFF0F0;
+}
