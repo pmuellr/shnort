@@ -1,6 +1,9 @@
 import { Runtime, Inspector, Library } from './vendor/observablehq/runtime.js'
 export { Runtime, Inspector, Library } from './vendor/observablehq/runtime.js'
 
+// @ts-ignore
+const markdownit = window.markdownit
+
 const DefaultLibrary = {
   ...new Library(),
   loadNote: () => loadNote,
@@ -154,6 +157,11 @@ function getObserverFactory(containerEl) {
 
 /** @type { (exports: any) => string } */
 function getLayout(exports) {
+  if (exports && typeof exports.$layout_md === 'string') {
+    const md = markdownit({ html: true })
+    return md.render(exports.$layout_md.trim())
+  }
+
   if (exports && typeof exports.$layout === 'string') {
     return exports.$layout
   }

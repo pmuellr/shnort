@@ -1,27 +1,33 @@
 // @ts-ignore
 const vegaEmbed = window.vegaEmbed
 
+export const $layout_md = `
+from [Vega-Lite – A Grammar of Interactive Graphics](https://vega.github.io/vega-lite/)
 
-export const $layout = `
-  <div class='header'></div>
-  <div class='chartSeattleWeather boxed'></div>
-  <div class='boxed'>
-    <b>vega lite spec</b><hr>
-    <div class='vegaLiteSpec'></div>
-  </div>
-  <div class='boxed'>
-    <b>all data available</b><hr>
-    <div class='data'></div>
-  </div>
-  <div class='boxed'>
-    <b>seattle-weather.csv as an object<hr>
-    <div class='seattleWeather'></b></div>
-  </div>
-  <div class='boxed'>
-    <b>first few rows of seattle-weather.csv as a table</b><hr>
-    <div class='tableSeattleWeather'></div>
-  </div>
-  <div class='trailer'></div>
+<div class='chartSeattleWeather'></div>
+
+------------------------------------------------------------------------
+**vega lite spec**
+
+<div class='vegaLiteSpec'></div>
+
+------------------------------------------------------------------------
+**all data available**
+
+<div class='data'></div>
+
+------------------------------------------------------------------------
+**seattle-weather.csv as an object** 
+
+<div class='seattleWeather'></b></div>
+
+------------------------------------------------------------------------
+**first few rows of seattle-weather.csv as a table**
+
+<div class='tableSeattleWeather'></div>
+  
+------------------------------------------------------------------------
+_[view current source](${import.meta.url})_
 `
 
 export function header(md) {
