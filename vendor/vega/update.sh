@@ -3,8 +3,9 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 function main() {
-    dl runtime.js     @observablehq/runtime@4.18.7/dist/runtime.js
-    dl inspector.css  @observablehq/inspector@3.2.4/dist/inspector.css
+    dl vega.js       vega@5.22.1/build/vega.js
+    dl vega-lite.js  vega-lite@5.2.0/build/vega-lite.js
+    dl vega-embed.js vega-embed@6.20.8/build/vega-embed.js
 }
 
 function dl() {

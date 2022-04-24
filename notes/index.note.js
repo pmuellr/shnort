@@ -1,4 +1,5 @@
 const notes = [
+  'vega-lite',
   'Inputs',
   'graphic',
   'generator',

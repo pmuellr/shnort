@@ -1,16 +1,29 @@
+const inputs = [
+  'button',
+  'toggle',
+  'checkbox',
+  'radio',
+  'range',
+  'select',
+  'text',
+  'textarea',
+  'date',
+  'color',
+  'file',
+  'form',
+]
+
+const divs = inputs.map(input => `
+  <div class=boxed> 
+    <b>${input}</b><hr>
+    <div class=${input}_view></div>
+    <div class=${input}></div>
+  </div>`
+)
 export const $layout = `
   <div class='header'></div>
-  <div class=boxed><div class=button_view>  </div><div class=button>  </div></div>
-  <div class=boxed><div class=toggle_view>  </div><div class=toggle>  </div></div>
-  <div class=boxed><div class=checkbox_view></div><div class=checkbox></div></div>
-  <div class=boxed><div class=radio_view>   </div><div class=radio>   </div></div>
-  <div class=boxed><div class=range_view>   </div><div class=range>   </div></div>
-  <div class=boxed><div class=select_view>  </div><div class=select>  </div></div>
-  <div class=boxed><div class=text_view>    </div><div class=text>    </div></div>
-  <div class=boxed><div class=textarea_view></div><div class=textarea></div></div>
-  <div class=boxed><div class=date_view>    </div><div class=date>    </div></div>
-  <div class=boxed><div class=color_view>   </div><div class=color>   </div></div>
-  <div class=boxed><div class=file_view>    </div><div class=file>    </div></div>
+  ${divs}
+  <div class=boxed> <b>bind</b>     <div class=bound1_view>    </div><div class=bound2_view>  </div></div>
   <div class='trailer'></div>
 `
 
@@ -61,6 +74,24 @@ export function color_view(Inputs) {
 
 export function file_view(Inputs) {
   return Inputs.file({label: "CSV file", accept: ".csv", required: true})
+}
+
+export function form_view(Inputs) {
+  return Inputs.form({
+    r: Inputs.range([0, 255], {step: 1, label: "r"}),
+    g: Inputs.range([0, 255], {step: 1, label: "g"}),
+    b: Inputs.range([0, 255], {step: 1, label: "b"})
+  })
+}
+
+export function bound1_view(Inputs) {
+  const input = Inputs.range([0, 100], { value: 50, step: 1, label: 'range' })
+  return input
+}
+
+export function bound2_view(Inputs, bound1_view) {
+  const input =  Inputs.number([0, 100], { value: 50, step: 1, label: 'number' })
+  return Inputs.bind(input, bound1_view)
 }
 
 export function trailer(md) {

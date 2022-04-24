@@ -13,7 +13,12 @@ export async function loadNote(url, containerEl, selector) {
   const targetEl = containerEl.querySelector(selector)
   if (!targetEl) throw new Error(`selector not found: "${selector}"`)
 
-  const noteExports = await import(url) || { noExports: 'no exports from module' }
+  let noteExports
+  try {
+    noteExports = await import(url) || { noExports: 'no exports from module' }
+  } catch(err) {
+    throw new Error(`error importing note: ${err}`)
+  }
 
   const layout = getLayout(noteExports)
   targetEl.innerHTML = layout
